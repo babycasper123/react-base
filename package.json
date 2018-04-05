@@ -4,13 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/server/index.js",
     "start:dev": "webpack-dev-server --mode development --watch-content-base --open",
     "build": "webpack --mode production",
     "webpack": "./node_modules/.bin/webpack -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Vishnu Chandran",
   "license": "ISC",
   "dependencies": {
     "babel-core": "^6.26.0",
