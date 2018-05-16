@@ -20,6 +20,9 @@ export default class AwesomeComponent extends React.Component {
         Likes : <span>{this.state.likesCount}</span>
         <div><button onClick={this.onLike}>Like Me {this.props.title}</button></div>
       </div>
+      // {this.props.names.map( ( name, index ) => {
+      //   return <p>{ name }</p>;
+      // })}
     );
    
   }
