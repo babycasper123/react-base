@@ -1,0 +1,31 @@
+@media (max-width:991px) {
+    .quoteWrapper {
+        font-size: 13px;
+    }
+    .slide-texts {
+        display: none;
+    }
+    .slick-slide {
+        img {
+            min-height: 40vh !important;
+        }
+    }
+}
+
+@media (min-width:991px) and (max-width:1199px) {
+    .slide-texts {
+        top: 68%;
+    }
+}
+
+@media (min-width:991px) {
+    .slick-slide {
+        height: 380px !important;
+    }
+}
+
+@media (max-width:768px){
+    .thmb-container-l {
+        margin: 10px;
+    }
+}

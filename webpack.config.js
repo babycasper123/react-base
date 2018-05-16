@@ -1,64 +1,91 @@
 var webpack = require('webpack');
 var path = require('path');
 
-var BUILD_DIR = path.resolve(__dirname, 'src/client/public');
-var APP_DIR = path.resolve(__dirname, 'src/client/app');
+var APP_DIR = path.resolve(__dirname, 'src');
+var BUILD_DIR = path.resolve(__dirname, 'public');
+
+
+const devMode = process.env.NODE_ENV !== 'production';
+
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+
 
 var config = {
     entry: APP_DIR + '/index.jsx',
     output: {
         path: BUILD_DIR,
-        filename: 'bundle.js',
-        publicPath: '/public/'
+        filename: 'js/bundle.js',
+        publicPath: ''
     },
+    optimization: {
+        minimizer: [
+            new HtmlWebpackPlugin({
+                title: 'Custom template using Handlebars',
+                template: APP_DIR + '/index.html',
+                inject:false
+              }),
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: true // set to true if you want JS source maps
+            }),
+            new OptimizeCSSAssetsPlugin()
+
+        ]
+    },
+    plugins: [
+        new MiniCssExtractPlugin({
+            // Options similar to the same options in webpackOptions.output
+            // both options are optional
+            filename: "styles/styles.css"
+        }),
+        new webpack.ProvidePlugin({   
+            jQuery: 'jquery',
+            $: 'jquery',
+            jquery: 'jquery'
+        })
+    ],
     module: {
-        rules: [
-            {
+        rules: [{
                 test: /\.jsx?/,
-                use: [
-                    { loader: 'babel-loader' }
-                ]
-            },
-            {
-                test: /\.(scss)$/,
                 use: [{
-                    loader: 'style-loader', // inject CSS to page
-                }, {
-                    loader: 'css-loader', // translates CSS into CommonJS modules
-                }, {
-                    loader: 'postcss-loader', // Run post css actions
-                    options: {
-                        plugins: function () { // post css plugins, can be exported to postcss.config.js
-                            return [
-                                require('precss'),
-                                require('autoprefixer')
-                            ];
-                        }
-                    }
-                }, {
-                    loader: 'sass-loader' // compiles Sass to CSS
+                    loader: 'babel-loader'
                 }]
             },
             {
+                test: /\.(scss)$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'sass-loader',
+                ],
+            },
+            {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: [MiniCssExtractPlugin.loader, 'css-loader']
             },
             {
-                test: /\.png$/,
-                loader: 'url-loader?limit=100000'
+                test: /\.(png|gif|woff|woff2)$/,
+                loader: 'url-loader?limit=100000&name=fonts/[name].[ext]'
             },
             {
-                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: 'url-loader?limit=10000&mimetype=application/font-woff'
+                test: /\.(ttf|otf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: 'file-loader?outputPath=fonts/'
             },
             {
-                test: /\.(ttf|otf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?|(jpg|gif)$/,
-                loader: 'file-loader'
+                test: /\.(jpg|svg)$/,
+                loader: 'file-loader?outputPath=images/&name=[name].[ext]'
             }
         ]
     },
     devServer: {
-        contentBase: path.resolve(__dirname, 'src/client'),
+        contentBase: path.resolve(__dirname, 'src'),
         watchContentBase: true,
         compress: true,
         port: 9000
